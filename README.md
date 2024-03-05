@@ -32,7 +32,7 @@ SQL Server 2022
 
 ### 运行
 
-1 使用SQL Server客户端（SSMS）新建一个数据库并将sql文件夹里的sql脚本导入。然后将项目目录下的 **appsettings.Development.json**文件中的数据库 **ConnectionStrings**字段修改为自己的数据库的用户名等信息。
+1 使用SQL Server客户端（SSMS）新建一个数据库并将sql文件夹里的sql脚本导入。然后将项目目录下的 **appsettings.Development.json**文件中的数据库 **ConnectionStrings**字段修改为自己的数据库的服务器名称、用户名和密码等信息。
 
 2 在Visual Studio中运行项目。
 
