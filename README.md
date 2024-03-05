@@ -12,7 +12,7 @@
 
 后端程序所需依赖
 
-后端程序虽然仅主要使用了 **Minimal APIs**的库，但运行环境为 **.NET8**，其余操作数据库和使用 **Swagger**的所需依赖列表如下
+后端程序虽然仅主要使用了 **Minimal APIs**的库，但运行环境为 **.NET8**，其余操作数据库和使用 **Swagger**的所需依赖列表如下,均可使用NuGet进行安装。
 
 ```
 Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore  8.0.2
@@ -36,6 +36,8 @@ SQL Server 2022
 
 2 在Visual Studio中运行项目。
 
+3 项目运行后可在浏览器中的Swagger页面查看项目功能对应的API接口。
+
 ---
 
 ### 项目目录
@@ -43,6 +45,8 @@ SQL Server 2022
 项目目录所涉及的主要文件夹和文件结构
 
 MusicManagementsMinimalAPI
+
+
 |——Assert   资源文件夹
 
 |——Common 公共类文件夹
@@ -50,13 +54,17 @@ MusicManagementsMinimalAPI
 - |——Config  文件夹主要包含了需要注入的DbContext
 
 |——Customer 自定义类文件夹
+
 |——Data 数据模型文件夹
+
 |——Models 实体类文件夹
 
 - |——DTO 接口返回所需的包装类文件夹
 
 |——Route 路由文件夹，充当controller的功能
+
 |——appsettings.json 配置数据库连接
+
 |——Program.cs 服务器启动主程序
 
-3 项目运行后可在浏览器中的Swagger页面查看项目功能对应的API接口
+
