@@ -47,24 +47,24 @@ SQL Server 2022
 MusicManagementsMinimalAPI
 
 
-|——Assert   资源文件夹
+|——Assert    *资源文件夹*
 
-|——Common 公共类文件夹
+|——Common   *公共类文件夹*
 
-- |——Config  文件夹主要包含了需要注入的DbContext
+- |——Config   *文件夹主要包含了需要注入的DbContext*
 
-|——Customer 自定义类文件夹
+|——Customer   *自定义类文件夹*
 
-|——Data 数据模型文件夹
+|——Data      *数据模型文件夹*
 
-|——Models 实体类文件夹
+|——Models    *实体类文件夹*
 
-- |——DTO 接口返回所需的包装类文件夹
+- |——DTO    *接口返回所需的包装类文件夹*
 
-|——Route 路由文件夹，充当controller的功能
+|——Route    *路由文件夹，充当controller的功能*
 
-|——appsettings.json 配置数据库连接
+|——appsettings.json    *配置数据库连接*
 
-|——Program.cs 服务器启动主程序
+|——Program.cs          *服务器启动主程序*
 
 
