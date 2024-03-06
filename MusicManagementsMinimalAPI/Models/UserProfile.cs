@@ -10,7 +10,7 @@ namespace MusicManagementsMinimalAPI.Models
         [Column("Id")]
         public int Id { get; set; }
         [Column("Name")]
-        public string Name { get; set; }
+        public string ?Name { get; set; }
         [Column("Password")]
         public string Password { get; set; }
         [Column("profilePictureUrl")]

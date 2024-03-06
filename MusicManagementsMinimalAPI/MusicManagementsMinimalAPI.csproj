@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="sqlscript\**" />
+    <Content Remove="sqlscript\**" />
+    <EmbeddedResource Remove="sqlscript\**" />
+    <None Remove="sqlscript\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.2" />
@@ -19,7 +26,6 @@
 
   <ItemGroup>
     <Folder Include="Assert\" />
-    <Folder Include="sqlscript\" />
   </ItemGroup>
 
 </Project>

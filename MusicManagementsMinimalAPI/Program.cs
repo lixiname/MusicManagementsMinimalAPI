@@ -21,10 +21,11 @@ namespace MusicManagementsMinimalAPI
             app.UseSwagger();
             app.UseSwaggerUI();
             //1 (b,c,d)=(a.b,a.c,a.d)元组 2 model的自动推断Key机制 3 所谓的EF跟踪是否默认是自动跟踪
-            
+            app.AddLoginTransactionEndPoint();
             app.AddMusicTransactionEndPoint();
             app.AddCollectTransactionEndPoint();
             app.AddTalkTransactionEndPoint();
+            
             app.Run();
         }
     }

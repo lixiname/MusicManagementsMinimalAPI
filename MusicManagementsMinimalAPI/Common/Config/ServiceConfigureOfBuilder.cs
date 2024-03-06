@@ -13,6 +13,9 @@ namespace MusicManagementsMinimalAPI.Common.Config
                 throw new InvalidOperationException("Connection string 'dbContext' not found.")))
                 .AddDbContext<MusicContext>(opt =>
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("dbContext") ??
+                throw new InvalidOperationException("Connection string 'dbContext' not found.")))
+                .AddDbContext<UserContext>(opt =>
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("dbContext") ??
                 throw new InvalidOperationException("Connection string 'dbContext' not found.")));
             
 
