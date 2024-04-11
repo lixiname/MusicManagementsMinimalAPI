@@ -11,7 +11,7 @@ namespace MusicManagementsMinimalAPI.Route
         {
             app.MapPost("UserLogin", Results<Ok<UserProfile>,NotFound<string>> ([FromBody] UserProfile userProfile, [FromServices] UserContext userContext) =>
             {
-                var user=userContext.User.Find(userProfile.Id)??null;
+                var user = userContext.User.FirstOrDefault(e => e.UserId == userProfile.UserId) ?? null;
                 if (user != null)
                 {
                     return TypedResults.Ok(user);
@@ -22,14 +22,64 @@ namespace MusicManagementsMinimalAPI.Route
                 }
 
             })
-                .WithName("UsesrLogin")
+                .WithName("UserLogin")
                 .WithOpenApi(option => new(option)
                 {
 
-                    Description = "UsesrLogin",
-                    Summary = "UsesrLogin"
+                    Description = "UserLogin",
+                    Summary = "UserLogin"
                 })
-                .WithTags("UsesrLogin");
+                .WithTags("UserLogin");
+
+
+
+            app.MapPost("ManagmentUserLogin", Results<Ok<ManagementUserProfile>, NotFound<string>> ([FromBody] ManagementUserProfile userProfile, [FromServices] UserContext userContext) =>
+            {
+                var user = userContext.ManagementUser.FirstOrDefault(e=>e.UserId==userProfile.UserId) ?? null;
+                
+                if (user != null)
+                {
+                    return TypedResults.Ok(user);
+                }
+                else
+                {
+                    return TypedResults.NotFound("not exist this management user");
+                }
+
+            })
+                .WithName("ManagementUserLogin")
+                .WithOpenApi(option => new(option)
+                {
+
+                    Description = "ManagementUserLogin",
+                    Summary = "ManagementUserLogin"
+                })
+                .WithTags("ManagementUserLogin");
+
+            app.MapPost("UserRegister", Results<Ok<UserProfile>, NotFound<string>> ([FromBody] UserProfile userProfile, [FromServices] UserContext userContext) =>
+            {
+                var user = userContext.User.Where(e => e.UserId == userProfile.UserId) ?? null;
+                if (user.Any())
+                {
+                    return TypedResults.NotFound("exist this user");
+
+                }
+                else
+                {
+                    userContext.User.Add(userProfile);
+                    userContext.SaveChanges();
+                    return TypedResults.Ok(userProfile);
+                }
+
+            })
+                .WithName("UserRegister")
+                .WithOpenApi(option => new(option)
+                {
+
+                    Description = "UserRegister",
+                    Summary = "UserRegister"
+                })
+                .WithTags("UserRegister");
         }
 
     }

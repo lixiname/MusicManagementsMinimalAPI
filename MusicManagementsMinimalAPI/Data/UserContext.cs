@@ -12,5 +12,6 @@ namespace MusicManagementsMinimalAPI.Data
 
         }
         public DbSet<UserProfile> User { get; set; } = default!;
+        public DbSet<ManagementUserProfile> ManagementUser { get; set; } = default!;
     }
 }

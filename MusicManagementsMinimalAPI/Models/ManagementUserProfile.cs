@@ -3,16 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MusicManagementsMinimalAPI.Models
 {
-    [Table("CommonUser")]
-    [Comment("CommonUser information")]
-    public class UserProfile
+    [Table("CommonManagmentUser")]
+    [Comment("CommonManagementUser information")]
+    public class ManagementUserProfile
     {
         [Column("Id")]
         public long Id { get; set; }
         [Column("UserId")]
         public string UserId { get; set; }
         [Column("Name")]
-        public string ?Name { get; set; }
+        public string? Name { get; set; }
         [Column("Password")]
         public string Password { get; set; }
         [Column("profilePictureUrl")]

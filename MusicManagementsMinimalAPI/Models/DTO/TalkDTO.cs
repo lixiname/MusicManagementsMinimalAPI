@@ -8,7 +8,7 @@ namespace MusicManagementsMinimalAPI.Models.DTO
         
         public int UploadUserId { get; set; }
         
-        public int TalkId { get; set; }
+        public long TalkId { get; set; }
         
         public string Contents { get; set; }
         public string UserName { get; set; }
