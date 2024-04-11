@@ -30,7 +30,7 @@ namespace MusicManagementsMinimalAPI.Route
                     Description = "UserLogin",
                     Summary = "UserLogin"
                 })
-                .WithTags("UserLogin");
+                .WithTags("UserInfo");
 
 
 
@@ -57,7 +57,7 @@ namespace MusicManagementsMinimalAPI.Route
                 })
                 .WithTags("ManagementUserLogin");
 
-            app.MapPost("UserInfoUpdate", Results<Ok<UserProfile>, NotFound<string>> ([FromBody] UserProfile userProfile, [FromServices] UserContext userContext) =>
+            app.MapPost("UserRegister", Results<Ok<UserProfile>, NotFound<string>> ([FromBody] UserProfile userProfile, [FromServices] UserContext userContext) =>
             {
                 var user = userContext.User.Where(e => e.UserId == userProfile.UserId) ?? null;
                 if (user.Any())
@@ -80,7 +80,7 @@ namespace MusicManagementsMinimalAPI.Route
                     Description = "UserRegister",
                     Summary = "UserRegister"
                 })
-                .WithTags("UserRegister");
+                .WithTags("UserInfo");
 
 
             app.MapPost("UserInfoUpdate", Results<Ok<UserProfile>, NotFound<string>> ([FromBody] UserProfileUpdateDTO userProfile, [FromServices] UserContext userContext) =>
@@ -91,8 +91,8 @@ namespace MusicManagementsMinimalAPI.Route
                     user.Name = userProfile.Name;
                     user.Phone = userProfile.Phone;
                     user.Email = userProfile.Email;
-                    userContext.User.Add(user);
-                    userContext.SaveChanges();
+                    //userContext.User.Add(user);
+                    //userContext.SaveChanges();
                     return TypedResults.Ok(user);
 
                 }
@@ -109,7 +109,7 @@ namespace MusicManagementsMinimalAPI.Route
                     Description = "UserInfoUpdate",
                     Summary = "UserInfoUpdate"
                 })
-                .WithTags("UserInfoUpdate");
+                .WithTags("UserInfo");
             
         }
 
