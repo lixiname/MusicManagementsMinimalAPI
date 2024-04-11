@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MusicManagementsMinimalAPI.Data;
 using MusicManagementsMinimalAPI.Models;
+using MusicManagementsMinimalAPI.Models.DTO;
 
 namespace MusicManagementsMinimalAPI.Route
 {
@@ -56,7 +57,7 @@ namespace MusicManagementsMinimalAPI.Route
                 })
                 .WithTags("ManagementUserLogin");
 
-            app.MapPost("UserRegister", Results<Ok<UserProfile>, NotFound<string>> ([FromBody] UserProfile userProfile, [FromServices] UserContext userContext) =>
+            app.MapPost("UserInfoUpdate", Results<Ok<UserProfile>, NotFound<string>> ([FromBody] UserProfile userProfile, [FromServices] UserContext userContext) =>
             {
                 var user = userContext.User.Where(e => e.UserId == userProfile.UserId) ?? null;
                 if (user.Any())
@@ -80,6 +81,36 @@ namespace MusicManagementsMinimalAPI.Route
                     Summary = "UserRegister"
                 })
                 .WithTags("UserRegister");
+
+
+            app.MapPost("UserInfoUpdate", Results<Ok<UserProfile>, NotFound<string>> ([FromBody] UserProfileUpdateDTO userProfile, [FromServices] UserContext userContext) =>
+            {
+                var user = userContext.User.FirstOrDefault(e => e.UserId == userProfile.UserId) ?? null;
+                if (user != null)
+                {
+                    user.Name = userProfile.Name;
+                    user.Phone = userProfile.Phone;
+                    user.Email = userProfile.Email;
+                    userContext.User.Add(user);
+                    userContext.SaveChanges();
+                    return TypedResults.Ok(user);
+
+                }
+                else
+                {
+                    return TypedResults.NotFound("not exist this user");
+                }
+
+            })
+                .WithName("UserInfoUpdate")
+                .WithOpenApi(option => new(option)
+                {
+
+                    Description = "UserInfoUpdate",
+                    Summary = "UserInfoUpdate"
+                })
+                .WithTags("UserInfoUpdate");
+            
         }
 
     }
