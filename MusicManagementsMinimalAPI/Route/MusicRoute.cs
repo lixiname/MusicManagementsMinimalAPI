@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MusicManagementsMinimalAPI.Customer;
 using MusicManagementsMinimalAPI.Data;
 using MusicManagementsMinimalAPI.Models;
+using MusicManagementsMinimalAPI.Models.Enum;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MusicManagementsMinimalAPI.Route
@@ -44,6 +45,28 @@ namespace MusicManagementsMinimalAPI.Route
                .WithName("GetMusicList")
                .WithTags("MusicManagment");
 
+            app.MapGet("/SearchReview", async Task<Results<Ok<List<Music>>, NotFound<string>>> ([FromServices] MusicContext musicContext) =>
+            {
+
+                var query = await musicContext.Music.Where(e => e.Review == MusicReviewEnum.Access).ToListAsync();
+                if (query.Count > 0)
+                {
+                    //return Results.Json(query);
+                    return TypedResults.Ok(query);
+                }
+                else
+                {
+                    return TypedResults.NotFound("not find anything");
+                }
+
+
+
+
+            })
+               .WithName("GetReviewMusicList")
+               .WithTags("MusicManagment");
+
+            
 
             app.MapGet("/Download", async Task<Results<Ok<Music>, NotFound<string>>> 
                 ([FromQuery(Name = "id")] long musicId, [FromServices] MusicContext musicContext) =>
