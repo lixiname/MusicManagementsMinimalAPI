@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MusicManagementsMinimalAPI.Data;
 using MusicManagementsMinimalAPI.Models;
 using MusicManagementsMinimalAPI.Models.DTO;
@@ -110,7 +111,27 @@ namespace MusicManagementsMinimalAPI.Route
                     Summary = "UserInfoUpdate"
                 })
                 .WithTags("UserInfo");
+
+            app.MapGet("/UserList", async Task<Results<Ok<List<UserProfile>>, NotFound<string>>> ([FromServices] UserContext userContext) =>
+            {
+
+                var query = await userContext.User.ToListAsync();
+                if (query.Count > 0)
+                {
+                    //return Results.Json(query);
+                    return TypedResults.Ok(query);
+                }
+                else
+                {
+                    return TypedResults.NotFound("not find anything");
+                }
+
+            })
+              .WithName("GetUserList")
+              .WithTags("UserManagment");
             
+
+
         }
 
     }

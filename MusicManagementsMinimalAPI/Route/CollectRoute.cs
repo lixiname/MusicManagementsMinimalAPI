@@ -21,8 +21,9 @@ namespace MusicManagementsMinimalAPI.Route
                 .WithTags("CollectManagment");
             
 
-            app.MapGet("/CollectSearch",async Task<Results<Ok<List<MusicLikeDTO>>,NotFound<string>>> ([FromQuery(Name ="UserId")] int userId, [FromServices] MusicContext musicContext) =>
+            app.MapGet("/CollectSearch",async Task<Results<Ok<List<MusicLikeDTO>>,NotFound<string>>> ([FromQuery(Name ="UserId")] long userId, [FromServices] MusicContext musicContext) =>
             {
+                Console.WriteLine();
                 var collectList=from music in musicContext.Music
                 join collect in musicContext.UserMusicRelate
                 on music.Id equals collect.MusicId
@@ -36,6 +37,11 @@ namespace MusicManagementsMinimalAPI.Route
                     Author = music.Author,
                     MusicContentUrl = music.MusicContentUrl,
                     MusicType = music.MusicType,
+                    AgreedNum=music.AgreedNum,
+                    DownLoadNum=music.DownLoadNum,
+                    TalkNum=music.TalkNum,
+                    UsingNum=music.UsingNum,
+                    CollectNum=music.CollectNum,
                     UserId = collect.UserId,
                 };
                 
@@ -76,7 +82,8 @@ namespace MusicManagementsMinimalAPI.Route
                     
                     musicContext.UserMusicRelate.Add(musicCollect);
                     var music = musicContext.Music.Find(musicCollect.MusicId);
-                    music!.AgreedNum += 1;
+                    //music!.AgreedNum += 1;
+                    music!.CollectNum += 1;
                     await musicContext.SaveChangesAsync();
                     
                     return TypedResults.Ok("collect success");
@@ -92,7 +99,7 @@ namespace MusicManagementsMinimalAPI.Route
                 });
 
 
-            group.MapDelete("", ([FromQuery(Name = "UserId")] int userId, [FromQuery(Name = "MusicId")] int musicId,
+            group.MapDelete("", ([FromQuery(Name = "UserId")] long userId, [FromQuery(Name = "MusicId")] long musicId,
                 MusicContext musicContext) =>
             {
                 var collect = new UserMusicRelate
@@ -103,7 +110,8 @@ namespace MusicManagementsMinimalAPI.Route
                 musicContext.UserMusicRelate.Remove(collect);
                 musicContext.SaveChanges();
                 var music=musicContext.Music.Find(musicId);
-                music!.AgreedNum -= 1;
+               
+                music!.CollectNum -= 1;
                 musicContext.SaveChanges();
                 return TypedResults.Ok("quit collect music success");
 

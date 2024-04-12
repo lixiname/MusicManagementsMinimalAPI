@@ -46,7 +46,7 @@ namespace MusicManagementsMinimalAPI.Route
 
 
             app.MapGet("/Download", async Task<Results<Ok<Music>, NotFound<string>>> 
-                ([FromQuery(Name = "id")] int musicId, [FromServices] MusicContext musicContext) =>
+                ([FromQuery(Name = "id")] long musicId, [FromServices] MusicContext musicContext) =>
             {
 
                 var music = musicContext.Music.Find(musicId) ?? null;
@@ -67,7 +67,7 @@ namespace MusicManagementsMinimalAPI.Route
 
 
 
-            app.MapGet("/Image",  ([FromQuery(Name = "id")] int musicId, [FromServices] MusicContext musicContext) =>
+            app.MapGet("/Image",  ([FromQuery(Name = "id")] long musicId, [FromServices] MusicContext musicContext) =>
             {
 
                 var music = musicContext.Music.Find(musicId) ?? null;
@@ -91,7 +91,7 @@ namespace MusicManagementsMinimalAPI.Route
 
         static RouteGroupBuilder MapMusicManageApi(this RouteGroupBuilder group)
         {
-            group.MapGet("/", async Task<Results<Ok<Music>,NotFound<string>>> (int musicId, [FromServices] MusicContext musicContext) =>
+            group.MapGet("/", async Task<Results<Ok<Music>,NotFound<string>>> (long musicId, [FromServices] MusicContext musicContext) =>
             {
 
                 var music=musicContext.Music.Find(musicId)??null;
