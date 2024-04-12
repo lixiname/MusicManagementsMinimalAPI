@@ -1,4 +1,6 @@
-﻿namespace MusicManagementsMinimalAPI.Models.Const
+﻿using System.ComponentModel;
+
+namespace MusicManagementsMinimalAPI.Models.Const
 {
     public class CommonConst
     {
@@ -15,4 +17,5 @@
         public const string AuthorNUllConst = "佚名";
 
     }
+
 }

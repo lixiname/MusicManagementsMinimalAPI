@@ -21,5 +21,7 @@ namespace MusicManagementsMinimalAPI.Models
         public string? Email { get; set; }
         [Column("Phone")]
         public string? Phone { get; set; }
+        [Column("State")]
+        public int State { get; set; }
     }
 }

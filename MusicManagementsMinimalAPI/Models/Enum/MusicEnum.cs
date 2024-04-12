@@ -24,5 +24,7 @@ namespace MusicManagementsMinimalAPI.Models.Enum
         [Description("伤感")]
         Type2 = 2,
     }
+
     
+
 }
