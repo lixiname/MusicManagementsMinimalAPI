@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MusicManagementsMinimalAPI.Common;
 using MusicManagementsMinimalAPI.Data;
 using MusicManagementsMinimalAPI.Models;
 using MusicManagementsMinimalAPI.Models.DTO;
@@ -13,6 +14,8 @@ namespace MusicManagementsMinimalAPI.Route
         {
             app.MapPost("UserLogin", Results<Ok<UserProfile>,NotFound<string>> ([FromBody] UserProfile userProfile, [FromServices] UserContext userContext) =>
             {
+                var Pwd=DataEncryption.ToMD5(userProfile.Password);
+                userProfile.Password=Pwd;
                 var user = userContext.User.FirstOrDefault(e => e.UserId == userProfile.UserId) ?? null;
                 if (user != null)
                 {
@@ -60,6 +63,8 @@ namespace MusicManagementsMinimalAPI.Route
 
             app.MapPost("UserRegister", Results<Ok<UserProfile>, NotFound<string>> ([FromBody] UserProfile userProfile, [FromServices] UserContext userContext) =>
             {
+                var Pwd = DataEncryption.ToMD5(userProfile.Password);
+                userProfile.Password = Pwd;
                 var user = userContext.User.Where(e => e.UserId == userProfile.UserId) ?? null;
                 if (user.Any())
                 {
