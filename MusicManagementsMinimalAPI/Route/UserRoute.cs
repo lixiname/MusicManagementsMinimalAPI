@@ -97,8 +97,8 @@ namespace MusicManagementsMinimalAPI.Route
                     user.Name = userProfile.Name;
                     user.Phone = userProfile.Phone;
                     user.Email = userProfile.Email;
-                    //userContext.User.Add(user);
-                    //userContext.SaveChanges();
+                    userContext.User.Add(user);
+                    userContext.SaveChanges();
                     return TypedResults.Ok(user);
 
                 }
