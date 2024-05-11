@@ -45,22 +45,38 @@ namespace MusicManagementsMinimalAPI.Route
                .WithName("GetMusicList")
                .WithTags("MusicManagment");
 
-            app.MapGet("/SearchReview", async Task<Results<Ok<List<Music>>, NotFound<string>>> ([FromServices] MusicContext musicContext) =>
+            app.MapGet("/SearchReview", async Task<Results<Ok<List<Music>>, NotFound<string>>> (
+                string searchKey,[FromServices] MusicContext musicContext) =>
             {
-
-                var query = await musicContext.Music.Where(e => e.Review == MusicReviewEnum.Access).ToListAsync();
-                if (query.Count > 0)
+                if (!string.IsNullOrWhiteSpace(searchKey!))
                 {
-                    //return Results.Json(query);
-                    return TypedResults.Ok(query);
+                    var query = await musicContext.Music
+                    .Where(e => e.Review == MusicReviewEnum.Access
+                    &&(e.Name.Contains(searchKey) || e.Author.Contains(searchKey)))
+                    .ToListAsync();
+                    if (query.Count > 0)
+                    {
+                        //return Results.Json(query);
+                        return TypedResults.Ok(query);
+                    }
+                    else
+                    {
+                        return TypedResults.NotFound("not find anything");
+                    }
                 }
                 else
                 {
-                    return TypedResults.NotFound("not find anything");
+                    var query = await musicContext.Music.Where(e => e.Review == MusicReviewEnum.Access).ToListAsync();
+                    if (query.Count > 0)
+                    {
+                        //return Results.Json(query);
+                        return TypedResults.Ok(query);
+                    }
+                    else
+                    {
+                        return TypedResults.NotFound("not find anything");
+                    }
                 }
-
-
-
 
             })
                .WithName("GetReviewMusicList")
@@ -87,9 +103,6 @@ namespace MusicManagementsMinimalAPI.Route
                .WithName("DownloadMusic")
                .WithTags("MusicManagment");
 
-
-
-
             app.MapGet("/Image",  ([FromQuery(Name = "id")] long musicId, [FromServices] MusicContext musicContext) =>
             {
 
@@ -108,6 +121,25 @@ namespace MusicManagementsMinimalAPI.Route
             })
                .WithName("ImageCover")
                .WithTags("MusicManagment");
+
+            app.MapGet("/Media", ([FromQuery(Name = "id")] long musicId, [FromServices] MusicContext musicContext) =>
+            {
+
+                var music = musicContext.Music.Find(musicId) ?? null;
+                if (music != null)
+                {
+                    var path = music.MusicContentUrl;
+                    return TypedResults.Extensions.MediaResult(path);
+
+                }
+                else
+                {
+                    return TypedResults.NotFound("image assert not exist");
+                }
+
+            })
+              .WithName("Media")
+              .WithTags("MusicManagment");
 
         }
         
