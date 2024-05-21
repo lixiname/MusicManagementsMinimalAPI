@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Lazy.Captcha.Core;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicManagementsMinimalAPI.Common;
+using MusicManagementsMinimalAPI.Common.Options;
 using MusicManagementsMinimalAPI.Data;
 using MusicManagementsMinimalAPI.Models;
 using MusicManagementsMinimalAPI.Models.DTO;
+using StackExchange.Redis;
+using Yitter.IdGenerator;
 
 namespace MusicManagementsMinimalAPI.Route
 {
@@ -12,8 +16,34 @@ namespace MusicManagementsMinimalAPI.Route
     {
         public static void AddLoginTransactionEndPoint(this WebApplication app)
         {
-            app.MapPost("UserLogin", Results<Ok<UserProfile>,NotFound<string>> ([FromBody] UserProfile userProfile, [FromServices] UserContext userContext) =>
+
+            app.MapGet("Captcha", ( ICaptcha captcha) =>
             {
+                var codeId = YitIdHelper.NextId().ToString();
+                var captchaInfo=captcha.Generate(codeId);
+                var stream = new MemoryStream(captchaInfo.Bytes);
+                
+                return new { Id = captchaInfo.Id, Img = captchaInfo.Bytes };
+                
+
+
+            })
+                .WithName("Captcha")
+                .WithOpenApi(option => new(option)
+                {
+
+                    Description = "Captcha",
+                    Summary = "Captcha"
+                })
+                .WithTags("Captcha");
+
+
+
+            app.MapPost("UserLogin", Results<Ok<UserProfile>,NotFound<string>> ([FromBody] UserLoginInfoDTO userProfile, [FromServices] UserContext userContext, ICaptcha captcha) =>
+            {
+                if (!captcha.Validate(userProfile.CaptchaId.ToString(), userProfile.CaptchaCode))
+                    return TypedResults.NotFound("CaptchaCode error");
+
                 var Pwd=DataEncryption.ToMD5(userProfile.Password);
                 userProfile.Password=Pwd;
                 var user = userContext.User.FirstOrDefault(e => e.UserId == userProfile.UserId) ?? null;
@@ -36,6 +66,59 @@ namespace MusicManagementsMinimalAPI.Route
                 })
                 .WithTags("UserInfo");
 
+
+
+            app.MapGet("sendEmailCode", async ([FromQuery(Name = "email")] string email,[FromServices] EmailOptions emailOptions, [FromServices] IDatabase redis) =>
+            {
+                emailOptions.ReceiveEmail = email;
+                var emailKeyValueDTO=await SendEmailCode.SendEmailCodeAsync(emailOptions);
+                redis.StringSet(emailKeyValueDTO.Key,emailKeyValueDTO.Value, TimeSpan.FromMinutes(3));
+                return emailKeyValueDTO.RandomId;
+            }).WithName("sendEmailCode")
+                .WithOpenApi(option => new(option)
+                {
+
+                    Description = "findUserPassword",
+                    Summary = "sendEmailCode to findUserPassword"
+                })
+                .WithTags("sendEmailCode");
+
+            app.MapPost("findPwd", Results<Ok<UserProfile>, NotFound<string>> (
+                [FromBody] UserResetPwdDTO userRestPwdDTO, [FromServices] IDatabase redis, [FromServices] UserContext userContext) =>
+            {
+
+                var user = userContext.User.FirstOrDefault(e => e.UserId == userRestPwdDTO.UserId) ?? null;
+                if (user != null)
+                {
+                    
+                    var cacheEmailCode = redis.StringGet($"CodeKey:{"2729801553@qq.com"}:{userRestPwdDTO.EmailRandomId}");
+                    if (userRestPwdDTO.EmailCode.Equals(cacheEmailCode, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var Pwd = DataEncryption.ToMD5(userRestPwdDTO.ChangePassword);
+                        user.Password = Pwd;
+                        userContext.User.Update(user);
+                        userContext.SaveChanges();
+                        return TypedResults.Ok(user);
+                    }
+                    else
+                    {
+                        return TypedResults.NotFound("code error");
+                    }
+                }
+                else
+                {
+                    return TypedResults.NotFound("not find this user");
+                }
+                
+                
+            }).WithName("findUserPassword")
+                .WithOpenApi(option => new(option)
+                {
+
+                    Description = "findUserPassword",
+                    Summary = "findUserPassword"
+                })
+                .WithTags("findPwd");
 
 
             app.MapPost("ManagmentUserLogin", Results<Ok<ManagementUserProfile>, NotFound<string>> ([FromBody] ManagementUserProfile userProfile, [FromServices] UserContext userContext) =>
@@ -97,7 +180,7 @@ namespace MusicManagementsMinimalAPI.Route
                     user.Name = userProfile.Name;
                     user.Phone = userProfile.Phone;
                     user.Email = userProfile.Email;
-                    userContext.User.Add(user);
+                    userContext.User.Update(user);
                     userContext.SaveChanges();
                     return TypedResults.Ok(user);
 

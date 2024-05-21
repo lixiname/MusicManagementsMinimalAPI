@@ -14,6 +14,9 @@ namespace MusicManagementsMinimalAPI
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.AddServicesConfig();
+            builder.AddYitIdHelperConfig();
+            builder.AddRedisConfig();
+            builder.AddEmailConfig();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 

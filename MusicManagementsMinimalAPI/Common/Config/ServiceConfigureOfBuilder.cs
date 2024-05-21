@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MusicManagementsMinimalAPI.Data;
 using MusicManagementsMinimalAPI.Models;
+using Yitter.IdGenerator;
 
 namespace MusicManagementsMinimalAPI.Common.Config
 {
@@ -17,7 +18,19 @@ namespace MusicManagementsMinimalAPI.Common.Config
                 .AddDbContext<UserContext>(opt =>
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("dbContext") ??
                 throw new InvalidOperationException("Connection string 'dbContext' not found.")));
-            
+            builder.Services.AddCaptcha(builder.Configuration);
+
+        }
+
+        public static void AddYitIdHelperConfig(this WebApplicationBuilder builder)
+        {
+
+
+            var idGeneratorOptions = new IdGeneratorOptions(1) { WorkerIdBitLength = 6 };
+            // 保存参数（务必调用，否则参数设置不生效）：
+            YitIdHelper.SetIdGenerator(idGeneratorOptions);
+
+
 
         }
     }
