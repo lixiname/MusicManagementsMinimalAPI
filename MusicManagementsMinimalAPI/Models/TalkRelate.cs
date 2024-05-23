@@ -12,12 +12,16 @@ namespace MusicManagementsMinimalAPI.Models
         //error的主码会不会导致删除多个，如何EF去设置联合主码
         [Key]
         [Column("MusicId")]
-        public int MusicId { get; set; }
+        public long MusicId { get; set; }
         [Column("UploadUserId")]
-        public int UploadUserId{ get; set; }
+        public long UploadUserId { get; set; }
         [Column("TalkId")]
-        public int TalkId { get; set; }
+        public long TalkId { get; set; }
         [Column("Contents")]
         public string Contents { get; set; }
+        [Column("time")]
+        public DateTime time { get; set; }
+        [Column("AgreedNum")]
+        public int AgreedNum { get; set; }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace MusicManagementsMinimalAPI.Models
 {
-    [Table("UserMusicRelate")]
-    [Comment("MusicCollect information")]
-    public class UserMusicRelate
+    [Table("DownloadRelate")]
+    [Comment("DownloadMusic information")]
+    public class DownloadRelate
     {
         [Key]
         [Column("MusicId")]
@@ -13,8 +14,8 @@ namespace MusicManagementsMinimalAPI.Models
         //[Key]
         [Column("UserId")]
         public long UserId { get; set; }
-        [Column("time")]
-        public DateTime time { get; set; }
 
+        [Column("time")]
+        public DateTime time {  get; set; }
     }
 }

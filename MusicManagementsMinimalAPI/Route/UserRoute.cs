@@ -35,7 +35,7 @@ namespace MusicManagementsMinimalAPI.Route
                     Description = "Captcha",
                     Summary = "Captcha"
                 })
-                .WithTags("Captcha");
+                .WithTags("UserInfo");
 
 
 
@@ -68,12 +68,12 @@ namespace MusicManagementsMinimalAPI.Route
 
 
 
-            app.MapGet("sendEmailCode", async ([FromQuery(Name = "email")] string email,[FromServices] EmailOptions emailOptions, [FromServices] IDatabase redis) =>
+            app.MapGet("emailCode", async ([FromQuery(Name = "email")] string email,[FromServices] EmailOptions emailOptions, [FromServices] IDatabase redis) =>
             {
                 emailOptions.ReceiveEmail = email;
                 var emailKeyValueDTO=await SendEmailCode.SendEmailCodeAsync(emailOptions);
                 redis.StringSet(emailKeyValueDTO.Key,emailKeyValueDTO.Value, TimeSpan.FromMinutes(3));
-                return emailKeyValueDTO.RandomId;
+                return new { EmailRandomId=emailKeyValueDTO.RandomId };
             }).WithName("sendEmailCode")
                 .WithOpenApi(option => new(option)
                 {
@@ -81,17 +81,18 @@ namespace MusicManagementsMinimalAPI.Route
                     Description = "findUserPassword",
                     Summary = "sendEmailCode to findUserPassword"
                 })
-                .WithTags("sendEmailCode");
+                .WithTags("UserInfo");
 
-            app.MapPost("findPwd", Results<Ok<UserProfile>, NotFound<string>> (
+            app.MapPost("resetPwd", Results<Ok<UserProfile>, NotFound<string>> (
                 [FromBody] UserResetPwdDTO userRestPwdDTO, [FromServices] IDatabase redis, [FromServices] UserContext userContext) =>
             {
 
                 var user = userContext.User.FirstOrDefault(e => e.UserId == userRestPwdDTO.UserId) ?? null;
                 if (user != null)
                 {
+
                     
-                    var cacheEmailCode = redis.StringGet($"CodeKey:{"2729801553@qq.com"}:{userRestPwdDTO.EmailRandomId}");
+                    var cacheEmailCode = redis.StringGet($"CodeKey:{"xxx@qq.com"}:{userRestPwdDTO.EmailRandomId}");
                     if (userRestPwdDTO.EmailCode.Equals(cacheEmailCode, StringComparison.OrdinalIgnoreCase))
                     {
                         var Pwd = DataEncryption.ToMD5(userRestPwdDTO.ChangePassword);
@@ -118,7 +119,7 @@ namespace MusicManagementsMinimalAPI.Route
                     Description = "findUserPassword",
                     Summary = "findUserPassword"
                 })
-                .WithTags("findPwd");
+                .WithTags("UserInfo");
 
 
             app.MapPost("ManagmentUserLogin", Results<Ok<ManagementUserProfile>, NotFound<string>> ([FromBody] ManagementUserProfile userProfile, [FromServices] UserContext userContext) =>

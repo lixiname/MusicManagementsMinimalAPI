@@ -35,7 +35,7 @@ namespace MusicManagementsMinimalAPI.Common
             client.Disconnect(true);
             var emailKeyValueDTO = new EmailKeyValueDTO
             {
-                Key = $"CodeKey:{emailOptions.ReceiveEmail}:{randomId.ToString()}",
+                Key = $"CodeKey:{"xxx@qq.com"}:{randomId.ToString()}",
                 Value = code,
                 RandomId=randomId.ToString()
             };

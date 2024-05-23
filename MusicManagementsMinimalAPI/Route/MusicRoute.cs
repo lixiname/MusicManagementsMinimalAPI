@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MusicManagementsMinimalAPI.Customer;
 using MusicManagementsMinimalAPI.Data;
 using MusicManagementsMinimalAPI.Models;
+using MusicManagementsMinimalAPI.Models.DTO;
 using MusicManagementsMinimalAPI.Models.Enum;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -140,6 +141,128 @@ namespace MusicManagementsMinimalAPI.Route
             })
               .WithName("Media")
               .WithTags("MusicManagment");
+            
+            app.MapGet("/SearchLineChart", async Task<Results<Ok<List<MusicAgreedTopSortDTO>>, NotFound<string>>> (
+                [FromQuery(Name = "year")] int year,
+                [FromQuery(Name = "month")] int month,
+                [FromQuery(Name = "musicId")] long musicId,
+                [FromServices] MusicContext musicContext) =>
+            {
+
+                var music=await musicContext.Music.FindAsync(musicId);
+                
+                var musicSort = await musicContext.AgreedDB
+                .Where(item => item.time.Year == year && item.time.Month == month&&item.MusicId==musicId)
+                .GroupBy(item => item.time.Day)
+                .OrderBy(item => item.First().time.Day)
+                .Select(group => new MusicAgreedTopSortDTO
+                { 
+                    MusicId=music!.Id,
+                    MusicName=music.Name,
+                    Count = group.Count(),
+                    Day=group.First().time.Day,
+                    
+                }).ToListAsync();
+               
+                if (musicSort.Count>0)
+                {
+                    //return Results.Json(query);
+                    return TypedResults.Ok(musicSort);
+                }
+                else
+                {
+                    return TypedResults.NotFound("not find anything");
+                }
+
+
+
+
+            })
+               .WithName("GetBarChartMusicList")
+               .WithTags("MusicChart");
+
+            app.MapGet("/SearchBarChart", async Task<Results<Ok<List<MusicCollectedLineDTO>>, NotFound<string>>> (
+                [FromQuery(Name = "year")] int year,
+                [FromQuery(Name = "month")] int month,
+                [FromServices] MusicContext musicContext) =>
+            {
+
+                var musicSort = await musicContext.UserMusicRelate
+                .Where(item => item.time.Year == year && item.time.Month == month)
+                .GroupBy(item => item.MusicId)
+                .OrderByDescending(item => item.Count())
+                .Select(group => new {
+                    MusicId = group.First().MusicId,
+                    Count = group.Count()
+                }).ToListAsync();
+                var query = from agreedMusic in musicSort
+                            join music in musicContext.Music
+                            on agreedMusic.MusicId equals music.Id
+                            select new MusicCollectedLineDTO
+                            {
+                                MusicId = music.Id,
+                                Count = agreedMusic.Count,
+                                MusicName = music.Name,
+                                Month = month,
+                            };
+                if (query.Any())
+                {
+                    //return Results.Json(query);
+                    return TypedResults.Ok(query.ToList());
+                }
+                else
+                {
+                    return TypedResults.NotFound("not find anything");
+                }
+
+
+
+
+            })
+               .WithName("GetLineChartMusicList")
+               .WithTags("MusicChart");
+
+
+            app.MapGet("/SearchPieChart", async Task<Results<Ok<List<MusicDownloadPieDTO>>, NotFound<string>>> (
+               [FromQuery(Name = "year")] int year,
+               [FromQuery(Name = "month")] int month,
+               [FromServices] MusicContext musicContext) =>
+            {
+
+                var musicSort = await musicContext.DownloadDB
+               .Where(item => item.time.Year == year && item.time.Month == month)
+               .GroupBy(item => item.MusicId)
+               .OrderByDescending(item => item.Count())
+               .Select(group => new {
+                   MusicId = group.First().MusicId,
+                   Count = group.Count()
+               }).ToListAsync();
+                var query = from agreedMusic in musicSort
+                            join music in musicContext.Music
+                            on agreedMusic.MusicId equals music.Id
+                            select new MusicDownloadPieDTO
+                            {
+                                MusicId = music.Id,
+                                Count = agreedMusic.Count,
+                                MusicName = music.Name,
+                                Month = month,
+                            };
+                if (query.Any())
+                {
+                    //return Results.Json(query);
+                    return TypedResults.Ok(query.ToList());
+                }
+                else
+                {
+                    return TypedResults.NotFound("not find anything");
+                }
+
+
+            })
+              .WithName("GetPieChartMusicList")
+              .WithTags("MusicChart");
+
+
 
         }
         

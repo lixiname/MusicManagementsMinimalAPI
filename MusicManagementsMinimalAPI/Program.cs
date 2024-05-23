@@ -27,6 +27,8 @@ namespace MusicManagementsMinimalAPI
             app.AddLoginTransactionEndPoint();
             app.AddMusicTransactionEndPoint();
             app.AddCollectTransactionEndPoint();
+            app.AddDownloadTransactionEndPoint();
+            app.AddAgreedTransactionEndPoint();
             app.AddTalkTransactionEndPoint();
             
             app.Run();
