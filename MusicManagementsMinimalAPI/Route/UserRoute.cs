@@ -70,7 +70,7 @@ namespace MusicManagementsMinimalAPI.Route
 
             app.MapGet("emailCode", async ([FromQuery(Name = "email")] string email,[FromServices] EmailOptions emailOptions, [FromServices] IDatabase redis) =>
             {
-                emailOptions.ReceiveEmail = email;
+                emailOptions.ReceiveEmail = "2662759998@qq.com";
                 var emailKeyValueDTO=await SendEmailCode.SendEmailCodeAsync(emailOptions);
                 redis.StringSet(emailKeyValueDTO.Key,emailKeyValueDTO.Value, TimeSpan.FromMinutes(3));
                 return new { EmailRandomId=emailKeyValueDTO.RandomId };
